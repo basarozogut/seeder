@@ -5,7 +5,7 @@ using Seeder.Generator.DataObjects;
 
 namespace Seeder.Generator.Interfaces
 {
-    interface IDataAccess : IDisposable
+    public interface IDataAccess : IDisposable
     {
         List<DatabaseColumn> GetColumnStructureFromDatabase(TableConfiguration tableConfiguration);
         List<DatabaseRow> GetDataForTable(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns);

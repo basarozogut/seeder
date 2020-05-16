@@ -1,6 +1,6 @@
-﻿namespace Seeder.Generator.SqlStringBuilder
+﻿namespace Seeder.Generator.Interfaces
 {
-    interface ISqlStringBuilder
+    public interface ISqlStringBuilder
     {
         void Append(string value);
         void AppendLine();

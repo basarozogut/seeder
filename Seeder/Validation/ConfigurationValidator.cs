@@ -24,12 +24,6 @@ namespace Seeder.Validation
                 return false;
             }
 
-            if (string.IsNullOrEmpty(_configuration.ConnectionString))
-            {
-                ErrorProvider.AddError($"{nameof(_configuration.ConnectionString)} cant't be null or empty!");
-                return false;
-            }
-
             if (_configuration.Tables == null || _configuration.Tables.Count <= 0)
             {
                 ErrorProvider.AddError($"{nameof(_configuration.Tables)} can't be null or empty!");

@@ -17,8 +17,6 @@ namespace Seeder.UnitTests
         {
             var databaseConfiguration = new DatabaseConfiguration()
             {
-                DatabaseType = DatabaseType.Mssql,
-                ConnectionString = "just testing",
                 Tables = new List<TableConfiguration>()
                 {
                     TableConfiguration.CreateDefault("Users")

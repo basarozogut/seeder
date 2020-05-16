@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using Seeder.Configuration;
 using Seeder.Generator.DataObjects;
 using Seeder.Generator.Interfaces;
-using Seeder.Generator.SqlStringBuilder;
+using Seeder.Generator.Mssql.SqlStringBuilder;
 
 namespace Seeder.Generator.Mssql
 {
-    sealed class MssqlGenerator : ISqlGenerator
+    public sealed class MssqlGenerator : ISqlGenerator
     {
         private readonly DatabaseConfiguration _configuration;
         private readonly IDataAccess _dataAccess;

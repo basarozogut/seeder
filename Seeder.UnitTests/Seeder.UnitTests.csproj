@@ -71,6 +71,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Seeder.Generator.Mssql\Seeder.Generator.Mssql.csproj">
+      <Project>{381f90ef-50fa-4b01-ac46-cc430e7a7c3d}</Project>
+      <Name>Seeder.Generator.Mssql</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Seeder\Seeder.csproj">
       <Project>{e4d431eb-2630-41c9-ad6c-4bd5ac433163}</Project>
       <Name>Seeder</Name>

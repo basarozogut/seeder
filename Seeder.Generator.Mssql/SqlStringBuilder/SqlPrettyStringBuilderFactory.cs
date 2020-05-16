@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Seeder.Generator.Interfaces;
 
-namespace Seeder.Generator.SqlStringBuilder
+namespace Seeder.Generator.Mssql.SqlStringBuilder
 {
     class SqlPrettyStringBuilderFactory : ISqlStringBuilderFactory
     {

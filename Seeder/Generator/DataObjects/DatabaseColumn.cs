@@ -1,6 +1,6 @@
 ﻿namespace Seeder.Generator.DataObjects
 {
-    class DatabaseColumn
+    public class DatabaseColumn
     {
         public string ColumnName { get; set; }
 

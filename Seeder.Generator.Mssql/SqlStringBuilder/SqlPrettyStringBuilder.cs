@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Seeder.Generator.Interfaces;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Seeder.Generator.SqlStringBuilder
+namespace Seeder.Generator.Mssql.SqlStringBuilder
 {
-    class SqlCompactStringBuilder : ISqlStringBuilder
+    class SqlPrettyStringBuilder : ISqlStringBuilder
     {
         private readonly StringBuilder _stringBuilder;
 
-        public SqlCompactStringBuilder()
+        public SqlPrettyStringBuilder()
         {
             _stringBuilder = new StringBuilder();
         }
@@ -22,22 +19,22 @@ namespace Seeder.Generator.SqlStringBuilder
 
         public void AppendLine(string value)
         {
-            _stringBuilder.Append($"{value} ");
+            _stringBuilder.AppendLine(value);
         }
 
         public void AppendCommentLine(string value)
         {
-            // Don't need comments on compact sql strings.
+            _stringBuilder.AppendLine(value);
         }
 
         public void EndStatement()
         {
-            _stringBuilder.Append(";");
+            _stringBuilder.AppendLine(";");
         }
 
         public void AppendLine()
         {
-            _stringBuilder.Append(" ");
+            _stringBuilder.AppendLine();
         }
 
         public override string ToString()

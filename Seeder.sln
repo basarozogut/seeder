@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seeder", "Seeder\Seeder.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seeder.UnitTests", "Seeder.UnitTests\Seeder.UnitTests.csproj", "{78C2B956-EA74-4C8B-82D5-F23F9448B35E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seeder.Generator.Mssql", "Seeder.Generator.Mssql\Seeder.Generator.Mssql.csproj", "{381F90EF-50FA-4B01-AC46-CC430E7A7C3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{78C2B956-EA74-4C8B-82D5-F23F9448B35E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78C2B956-EA74-4C8B-82D5-F23F9448B35E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78C2B956-EA74-4C8B-82D5-F23F9448B35E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{381F90EF-50FA-4B01-AC46-CC430E7A7C3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{381F90EF-50FA-4B01-AC46-CC430E7A7C3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{381F90EF-50FA-4B01-AC46-CC430E7A7C3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{381F90EF-50FA-4B01-AC46-CC430E7A7C3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
