@@ -8,6 +8,6 @@ namespace Seeder.Generator.Interfaces
     interface IDataAccess : IDisposable
     {
         List<DatabaseColumn> GetColumnStructureFromDatabase(TableConfiguration tableConfiguration);
-        List<List<DatabaseData>> GetDataForTable(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns);
+        List<DatabaseRow> GetDataForTable(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns);
     }
 }

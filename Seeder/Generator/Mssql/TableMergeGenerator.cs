@@ -43,10 +43,10 @@ namespace Seeder.Generator.Mssql
             foreach (var row in rows)
             {
                 sql.Append("(");
-                foreach (var column in row)
+                foreach (var column in row.Data)
                 {
                     sql.Append(GetFormattedValueForColumn(column));
-                    if (column != row.Last())
+                    if (column != row.Data.Last())
                         sql.Append(",");
                 }
                 sql.Append(")");

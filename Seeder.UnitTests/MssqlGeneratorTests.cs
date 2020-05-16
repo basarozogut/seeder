@@ -31,19 +31,25 @@ namespace Seeder.UnitTests
 
             var columnStructure = new List<DatabaseColumn>() { idColumn, usernameColumn, passwordColumn };
 
-            var data = new List<List<DatabaseData>>()
+            var data = new List<DatabaseRow>()
             {
-                new List<DatabaseData>()
+                new DatabaseRow()
                 {
-                    new DatabaseData() { Column = idColumn, Value = 1 },
-                    new DatabaseData() { Column = usernameColumn, Value = "User 1" },
-                    new DatabaseData() { Column = passwordColumn, Value = "1234" },
+                    Data = new List<DatabaseData>()
+                    {
+                        new DatabaseData() { Column = idColumn, Value = 1 },
+                        new DatabaseData() { Column = usernameColumn, Value = "User 1" },
+                        new DatabaseData() { Column = passwordColumn, Value = "1234" },
+                    }
                 },
-                new List<DatabaseData>()
+                new DatabaseRow()
                 {
-                    new DatabaseData() { Column = idColumn, Value = 2 },
-                    new DatabaseData() { Column = usernameColumn, Value = "User 2" },
-                    new DatabaseData() { Column = passwordColumn, Value = "5678" },
+                    Data = new List<DatabaseData>()
+                    {
+                        new DatabaseData() { Column = idColumn, Value = 2 },
+                        new DatabaseData() { Column = usernameColumn, Value = "User 2" },
+                        new DatabaseData() { Column = passwordColumn, Value = "5678" },
+                    }
                 }
             };
 

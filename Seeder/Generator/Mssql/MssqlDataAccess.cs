@@ -47,7 +47,7 @@ namespace Seeder.Generator.Mssql
             }).ToList();
         }
 
-        public List<List<DatabaseData>> GetDataForTable(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns)
+        public List<DatabaseRow> GetDataForTable(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns)
         {
             var sql =
                 $"SELECT {string.Join(",", tableConfiguration.Columns)} FROM {tableConfiguration.TableName}";
@@ -56,7 +56,7 @@ namespace Seeder.Generator.Mssql
             var dt = new DataTable();
             da.Fill(dt);
 
-            var tempRows = new List<List<DatabaseData>>();
+            var tempRows = new List<DatabaseRow>();
 
             foreach (DataRow row in dt.Rows)
             {
@@ -76,7 +76,10 @@ namespace Seeder.Generator.Mssql
                     tempVal.Column = databaseColumns.Single(r => r.ColumnName == columnName);
                     tempRow.Add(tempVal);
                 }
-                tempRows.Add(tempRow);
+                tempRows.Add(new DatabaseRow()
+                {
+                    Data = tempRow
+                });
             }
 
             return tempRows;
