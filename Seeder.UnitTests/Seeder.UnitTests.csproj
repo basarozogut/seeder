@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="SqlGeneratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DataSanitizationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Seeder.Generator.Mssql\Seeder.Generator.Mssql.csproj">

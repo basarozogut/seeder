@@ -1,10 +1,5 @@
 ﻿using Seeder.Generator.DataObjects;
 using Seeder.Generator.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Seeder.Generator.Mysql
 {
@@ -17,16 +12,19 @@ namespace Seeder.Generator.Mysql
 
             if (data.Column.DataType.StartsWith("varchar") ||
                 data.Column.DataType.StartsWith("nvarchar"))
-                return $"'{data.Value}'";
+                return $"'{EscapePossibleInjection((string)data.Value)}'";
 
-            return EscapePossibleInjection(data.Value.ToString());
+            if (data.Column.DataType == "int")
+                return ((int)data.Value).ToString();
+
+            throw new SqlGeneratorException($"Unsupported data type: {data.Column.DataType}");
         }
 
         private string EscapePossibleInjection(string value)
         {
             if (!string.IsNullOrEmpty(value))
             {
-                return value.Replace("'", "\'");
+                return value.Replace("'", @"\'");
             }
 
             return value;

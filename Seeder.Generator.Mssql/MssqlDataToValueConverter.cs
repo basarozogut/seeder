@@ -1,10 +1,5 @@
 ﻿using Seeder.Generator.DataObjects;
 using Seeder.Generator.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Seeder.Generator.Mssql
 {
@@ -16,15 +11,18 @@ namespace Seeder.Generator.Mssql
                 return "NULL";
 
             if (data.Column.DataType == "nvarchar")
-                return $"'{data.Value}'";
+                return $"'{EscapePossibleInjection((string)data.Value)}'";
 
             if (data.Column.DataType == "bit")
                 return ((bool)data.Value) ? "1" : "0";
 
+            if (data.Column.DataType == "int")
+                return ((int)data.Value).ToString();
+
             if (data.Column.DataType == "datetime") // conversion not supported for now
                 return "NULL"; // TODO make conversion
 
-            return EscapePossibleInjection(data.Value.ToString());
+            throw new SqlGeneratorException($"Unsupported data type: {data.Column.DataType}");
         }
 
         private string EscapePossibleInjection(string value)
