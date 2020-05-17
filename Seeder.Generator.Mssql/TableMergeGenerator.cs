@@ -52,7 +52,7 @@ namespace Seeder.Generator.Mssql
                 if (row != rows.Last())
                     sql.AppendLine(",");
                 else
-                    sql.AppendLine();
+                    sql.Append("");
             }
             sql.AppendLine($") AS s ({string.Join(", ", _tableConfiguration.Columns)}) ON (s.{_tableConfiguration.IdColumn} = t.{_tableConfiguration.IdColumn})");
 

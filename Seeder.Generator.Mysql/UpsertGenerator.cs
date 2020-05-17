@@ -1,6 +1,7 @@
 ﻿using Seeder.Configuration;
 using Seeder.Generator.DataObjects;
 using Seeder.Generator.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,29 +34,133 @@ namespace Seeder.Generator.Mysql
 
             sql.AppendCommentLine($"-- Seed for [{_tableConfiguration.TableName}]");
 
+            if (_tableConfiguration.EnableInsert && _tableConfiguration.EnableUpdate)
+            {
+                foreach (var row in rows)
+                {
+                    WriteInsertOrUpdate(sql, row);
+                }
+            }
+            else if (_tableConfiguration.EnableInsert)
+            {
+                WriteInsert(sql, rows);
+            }
+            else if (_tableConfiguration.EnableUpdate)
+            {
+                foreach (var row in rows)
+                {
+                    WriteUpdate(sql, row);
+                }
+            }
+
+            if (_tableConfiguration.EnableDelete)
+            {
+                WriteDelete(sql, rows);
+            }
+
             // TODO write statement generator.
 
             return sql.ToString();
         }
 
-        private void WriteValues(ISqlStringBuilder sql, List<DatabaseRow> rows)
+        private void WriteInsert(ISqlStringBuilder sql, List<DatabaseRow> rows)
         {
-            foreach (var row in rows)
-            {
-                sql.Append("(");
-                foreach (var column in row.Data)
-                {
-                    sql.Append(GetFormattedValueForColumn(column));
-                    if (column != row.Data.Last())
-                        sql.Append(",");
-                }
-                sql.Append(")");
+            /**
+             * INSERT INTO tablename
+                (id, val1, val2)
+            VALUES
+                (1, 'a', 'b'),
+                (2, 'x', 'y')
+             */
 
-                if (row != rows.Last())
+            sql.AppendLine($"INSERT INTO {_tableConfiguration.TableName}");
+            sql.AppendLine($"({string.Join(", ", _tableConfiguration.Columns)})");
+            sql.AppendLine("VALUES");
+            var generatedValues = rows.Select(r => GenerateValuesForRow(r)).ToList();
+            foreach (var generatedValue in generatedValues)
+            {
+                sql.Append(generatedValue);
+                if (generatedValue != generatedValues.Last())
+                    sql.AppendLine(",");
+                else
+                    sql.Append("");
+            }
+            sql.EndStatement();
+        }
+
+        private void WriteInsertOrUpdate(ISqlStringBuilder sql, DatabaseRow row)
+        {
+            /**
+            * INSERT INTO tablename
+               (id, val1, val2)
+             VALUES
+               (1, 'a', 'b')
+             ON DUPLICATE KEY UPDATE
+                val1 = @val1,
+                val2 = @val2
+            */
+
+            sql.AppendLine($"INSERT INTO {_tableConfiguration.TableName}");
+            sql.AppendLine($"({string.Join(", ", _tableConfiguration.Columns)})");
+            sql.AppendLine("VALUES");
+            sql.AppendLine(GenerateValuesForRow(row));
+            sql.AppendLine("ON DUPLICATE KEY UPDATE");
+            foreach (var data in row.Data.Where(r => !r.Column.IdColumn))
+            {
+                sql.Append($"{data.Column.ColumnName} = {GetFormattedValueForColumn(data)}");
+
+                if (data != row.Data.Last())
+                    sql.AppendLine(",");
+                else
+                    sql.Append("");
+            }
+            sql.EndStatement();
+        }
+
+        private void WriteUpdate(ISqlStringBuilder sql, DatabaseRow row)
+        {
+            /**
+            UPDATE tablename
+            SET
+                val1 = @val1,
+                val2 = @val2
+            WHERE
+                id = @id
+            */
+
+            sql.AppendLine($"UPDATE {_tableConfiguration.TableName}");
+            sql.AppendLine("SET");
+            foreach (var data in row.Data.Where(r => !r.Column.IdColumn))
+            {
+                sql.Append($"{data.Column.ColumnName} = {GetFormattedValueForColumn(data)}");
+
+                if (data != row.Data.Last())
                     sql.AppendLine(",");
                 else
                     sql.AppendLine();
             }
+            sql.AppendLine("WHERE");
+            var idColumn = row.Data.Single(r => r.Column.IdColumn);
+            sql.Append($"{idColumn.Column.ColumnName} = {idColumn.Value}");
+            sql.EndStatement();
+        }
+
+        private void WriteDelete(ISqlStringBuilder sql, List<DatabaseRow> rows)
+        {
+            /**
+            DELETE FROM tablename WHERE Id NOT IN (id1, id2)
+             */
+
+            var idColumns = rows.SelectMany(m => m.Data).Where(r => r.Column.IdColumn).ToList();
+            var idValues = string.Join(",", idColumns.Select(r => GetFormattedValueForColumn(r)));
+            sql.Append($"DELETE FROM {_tableConfiguration.TableName} WHERE {_tableConfiguration.IdColumn} NOT IN ({idValues})");
+            sql.EndStatement();
+        }
+
+        private string GenerateValuesForRow(DatabaseRow row)
+        {
+            var commaSeparatedValues = string.Join(",", row.Data.Select(r => GetFormattedValueForColumn(r)));
+            return $"({commaSeparatedValues})";
         }
 
         private string GetFormattedValueForColumn(DatabaseData data)
