@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Seeder.Generator.Mssql")]
+[assembly: AssemblyTitle("Seeder.Generator.Mysql")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Seeder.Generator.Mssql")]
+[assembly: AssemblyProduct("Seeder.Generator.Mysql")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("381f90ef-50fa-4b01-ac46-cc430e7a7c3d")]
+[assembly: Guid("8dbeaed6-d070-429a-8cf6-ec4fdec01063")]
 
 // Version information for an assembly consists of the following four values:
 //

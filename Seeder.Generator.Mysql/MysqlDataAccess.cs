@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Seeder.Configuration;
 using Seeder.Generator.DataObjects;
 using Seeder.Generator.Interfaces;
 
 namespace Seeder.Generator.Mssql
 {
-    sealed class MssqlDataAccess : IDataAccess
+    sealed class MysqlDataAccess : IDataAccess
     {
         private readonly SqlConnection _connection;
 
-        public MssqlDataAccess(SqlConnection connection)
+        public MysqlDataAccess(string connectionString)
         {
-            _connection = connection;
+            _connection = new SqlConnection(connectionString);
         }
 
         public List<DatabaseColumn> GetColumnStructureFromDatabase(TableConfiguration tableConfiguration)
@@ -81,6 +83,11 @@ namespace Seeder.Generator.Mssql
             }
 
             return tempRows;
+        }
+
+        public void Dispose()
+        {
+            _connection.Dispose();
         }
     }
 }

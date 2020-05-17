@@ -1,8 +1,8 @@
 ﻿using Seeder.Generator.Interfaces;
 
-namespace Seeder.Generator.Mssql.SqlStringBuilder
+namespace Seeder.Generator.SqlStringBuilder
 {
-    class SqlPrettyStringBuilderFactory : ISqlStringBuilderFactory
+    public class SqlPrettyStringBuilderFactory : ISqlStringBuilderFactory
     {
         public ISqlStringBuilder CreateSqlStringBuilder()
         {

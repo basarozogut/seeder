@@ -1,9 +1,9 @@
 ﻿using Seeder.Generator.Interfaces;
 using System.Text;
 
-namespace Seeder.Generator.Mssql.SqlStringBuilder
+namespace Seeder.Generator.SqlStringBuilder
 {
-    class SqlPrettyStringBuilder : ISqlStringBuilder
+    public class SqlPrettyStringBuilder : ISqlStringBuilder
     {
         private readonly StringBuilder _stringBuilder;
 

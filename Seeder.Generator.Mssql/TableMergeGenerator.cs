@@ -7,7 +7,10 @@ using Seeder.Generator.Interfaces;
 
 namespace Seeder.Generator.Mssql
 {
-    class TableMergeGenerator
+    /// <summary>
+    /// Helper class for generating MSSQL merge statements.
+    /// </summary>
+    sealed class TableMergeGenerator
     {
         private readonly TableConfiguration _tableConfiguration;
         private readonly List<DatabaseColumn> _databaseColumns;

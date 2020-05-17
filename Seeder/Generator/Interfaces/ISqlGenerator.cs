@@ -2,7 +2,7 @@
 
 namespace Seeder.Generator.Interfaces
 {
-    public interface ISqlGenerator : IDisposable
+    public interface ISqlGenerator
     {
         string GenerateSql();
     }

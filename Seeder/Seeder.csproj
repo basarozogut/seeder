@@ -54,6 +54,10 @@
     <Compile Include="Generator\SqlGeneratorException.cs" />
     <Compile Include="Generator\Interfaces\ISqlStringBuilder.cs" />
     <Compile Include="Generator\Interfaces\ISqlStringBuilderFactory.cs" />
+    <Compile Include="Generator\SqlStringBuilder\SqlCompactStringBuilder.cs" />
+    <Compile Include="Generator\SqlStringBuilder\SqlCompactStringBuilderFactory.cs" />
+    <Compile Include="Generator\SqlStringBuilder\SqlPrettyStringBuilder.cs" />
+    <Compile Include="Generator\SqlStringBuilder\SqlPrettyStringBuilderFactory.cs" />
     <Compile Include="Validation\ConfigurationValidator.cs" />
     <Compile Include="Configuration\DatabaseConfiguration.cs" />
     <Compile Include="Configuration\TableConfiguration.cs" />

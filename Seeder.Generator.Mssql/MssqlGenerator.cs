@@ -5,7 +5,7 @@ using System.Text;
 using Seeder.Configuration;
 using Seeder.Generator.DataObjects;
 using Seeder.Generator.Interfaces;
-using Seeder.Generator.Mssql.SqlStringBuilder;
+using Seeder.Generator.SqlStringBuilder;
 
 namespace Seeder.Generator.Mssql
 {
@@ -15,15 +15,25 @@ namespace Seeder.Generator.Mssql
         private readonly IDataAccess _dataAccess;
         private readonly ISqlStringBuilderFactory _sqlStringBuilderFactory;
 
-        public MssqlGenerator(DatabaseConfiguration configuration, IDataAccess dataAccess, bool prettyString = true)
+        private static ISqlStringBuilderFactory ChooseStringBuilderFactory(bool prettyString)
+        {
+            if (prettyString)
+                return new SqlPrettyStringBuilderFactory();
+            else
+                return new SqlCompactStringBuilderFactory();
+        }
+
+        /// <summary>
+        /// Create a seed script generator for a MSSQL database.
+        /// </summary>
+        /// <param name="configuration">The database configuration</param>
+        /// <param name="dataAccess">The data access layer for MSSQL database</param>
+        /// <param name="sqlStringBuilderFactory">The string builder factory, which will ultimately generate the sql string</param>
+        public MssqlGenerator(DatabaseConfiguration configuration, IDataAccess dataAccess, ISqlStringBuilderFactory sqlStringBuilderFactory)
         {
             _configuration = configuration;
             _dataAccess = dataAccess;
-
-            if (prettyString)
-                _sqlStringBuilderFactory = new SqlPrettyStringBuilderFactory();
-            else
-                _sqlStringBuilderFactory = new SqlCompactStringBuilderFactory();
+            _sqlStringBuilderFactory = sqlStringBuilderFactory;
         }
 
         public string GenerateSql()
@@ -56,11 +66,6 @@ namespace Seeder.Generator.Mssql
                 if (!databaseColumnNames.Contains(column))
                     throw new SqlGeneratorException($"Column not found in database! ({column})");
             }
-        }
-
-        public void Dispose()
-        {
-            _dataAccess?.Dispose();
         }
     }
 }
