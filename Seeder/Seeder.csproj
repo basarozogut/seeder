@@ -49,6 +49,7 @@
     <Compile Include="Generator\DataObjects\DatabaseColumn.cs" />
     <Compile Include="Generator\DataObjects\DatabaseData.cs" />
     <Compile Include="Generator\DataObjects\DatabaseRow.cs" />
+    <Compile Include="Generator\Interfaces\IDataToValueConverter.cs" />
     <Compile Include="Generator\Interfaces\ISqlGenerator.cs" />
     <Compile Include="Generator\Interfaces\IDataAccess.cs" />
     <Compile Include="Generator\SqlGeneratorException.cs" />

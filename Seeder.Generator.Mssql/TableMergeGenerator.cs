@@ -16,6 +16,7 @@ namespace Seeder.Generator.Mssql
         private readonly List<DatabaseColumn> _databaseColumns;
         private readonly IDataAccess _dataAccess;
         private readonly ISqlStringBuilderFactory _sqlStringBuilderFactory;
+        private readonly IDataToValueConverter dataToValueConverter = new MssqlDataToValueConverter();
 
         public TableMergeGenerator(
             TableConfiguration tableConfiguration,
@@ -43,7 +44,7 @@ namespace Seeder.Generator.Mssql
                 sql.Append("(");
                 foreach (var column in row.Data)
                 {
-                    sql.Append(GetFormattedValueForColumn(column));
+                    sql.Append(dataToValueConverter.Convert(column));
                     if (column != row.Data.Last())
                         sql.Append(",");
                 }
@@ -101,23 +102,6 @@ namespace Seeder.Generator.Mssql
         {
             sql.AppendLine("WHEN NOT MATCHED BY SOURCE");
             sql.Append("THEN DELETE");
-        }
-
-        private string GetFormattedValueForColumn(DatabaseData data)
-        {
-            if (data.Value == null)
-                return "NULL";
-
-            if (data.Column.DataType == "nvarchar")
-                return $"'{data.Value}'";
-
-            if (data.Column.DataType == "bit")
-                return ((bool)data.Value) ? "1" : "0";
-
-            if (data.Column.DataType == "datetime") // conversion not supported for now
-                return "NULL"; // TODO make conversion
-
-            return data.Value.ToString();
         }
     }
 }

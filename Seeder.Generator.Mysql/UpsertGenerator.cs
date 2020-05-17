@@ -13,6 +13,7 @@ namespace Seeder.Generator.Mysql
         private readonly List<DatabaseColumn> _databaseColumns;
         private readonly IDataAccess _dataAccess;
         private readonly ISqlStringBuilderFactory _sqlStringBuilderFactory;
+        private readonly IDataToValueConverter _dataToValueConverter = new MysqlDataToValueConverter();
 
         public UpsertGenerator(
             TableConfiguration tableConfiguration,
@@ -107,7 +108,7 @@ namespace Seeder.Generator.Mysql
             sql.AppendLine("ON DUPLICATE KEY UPDATE");
             foreach (var data in row.Data.Where(r => !r.Column.IdColumn))
             {
-                sql.Append($"{data.Column.ColumnName} = {GetFormattedValueForColumn(data)}");
+                sql.Append($"{data.Column.ColumnName} = {_dataToValueConverter.Convert(data)}");
 
                 if (data != row.Data.Last())
                     sql.AppendLine(",");
@@ -132,7 +133,7 @@ namespace Seeder.Generator.Mysql
             sql.AppendLine("SET");
             foreach (var data in row.Data.Where(r => !r.Column.IdColumn))
             {
-                sql.Append($"{data.Column.ColumnName} = {GetFormattedValueForColumn(data)}");
+                sql.Append($"{data.Column.ColumnName} = {_dataToValueConverter.Convert(data)}");
 
                 if (data != row.Data.Last())
                     sql.AppendLine(",");
@@ -152,27 +153,15 @@ namespace Seeder.Generator.Mysql
              */
 
             var idColumns = rows.SelectMany(m => m.Data).Where(r => r.Column.IdColumn).ToList();
-            var idValues = string.Join(",", idColumns.Select(r => GetFormattedValueForColumn(r)));
+            var idValues = string.Join(",", idColumns.Select(r => _dataToValueConverter.Convert(r)));
             sql.Append($"DELETE FROM {_tableConfiguration.TableName} WHERE {_tableConfiguration.IdColumn} NOT IN ({idValues})");
             sql.EndStatement();
         }
 
         private string GenerateValuesForRow(DatabaseRow row)
         {
-            var commaSeparatedValues = string.Join(",", row.Data.Select(r => GetFormattedValueForColumn(r)));
+            var commaSeparatedValues = string.Join(",", row.Data.Select(r => _dataToValueConverter.Convert(r)));
             return $"({commaSeparatedValues})";
-        }
-
-        private string GetFormattedValueForColumn(DatabaseData data)
-        {
-            if (data.Value == null)
-                return "NULL";
-
-            if (data.Column.DataType.StartsWith("varchar") ||
-                data.Column.DataType.StartsWith("nvarchar"))
-                return $"'{data.Value}'";
-
-            return data.Value.ToString();
         }
     }
 }
