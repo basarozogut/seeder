@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seeder.Generator.Mssql", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seeder.Generator.Mysql", "Seeder.Generator.Mysql\Seeder.Generator.Mysql.csproj", "{8DBEAED6-D070-429A-8CF6-EC4FDEC01063}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seeder.Examples.Mysql", "Seeder.Examples.Mysql\Seeder.Examples.Mysql.csproj", "{0082776C-02AF-469C-9AE4-C118D7D55566}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{8DBEAED6-D070-429A-8CF6-EC4FDEC01063}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DBEAED6-D070-429A-8CF6-EC4FDEC01063}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DBEAED6-D070-429A-8CF6-EC4FDEC01063}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0082776C-02AF-469C-9AE4-C118D7D55566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0082776C-02AF-469C-9AE4-C118D7D55566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0082776C-02AF-469C-9AE4-C118D7D55566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0082776C-02AF-469C-9AE4-C118D7D55566}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

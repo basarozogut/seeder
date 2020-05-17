@@ -47,6 +47,8 @@ namespace Seeder.Generator.Mssql
 
         public List<DatabaseRow> GetDataForTable(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns)
         {
+            MakeSecurityCheckForTable(tableConfiguration, databaseColumns);
+
             var sql =
                 $"SELECT {string.Join(",", tableConfiguration.Columns)} FROM {tableConfiguration.TableName}";
             var cmd = new SqlCommand(sql, _connection);
@@ -81,6 +83,16 @@ namespace Seeder.Generator.Mssql
             }
 
             return tempRows;
+        }
+
+        private void MakeSecurityCheckForTable(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns)
+        {
+            var databaseColumnNames = databaseColumns.Select(r => r.ColumnName).ToList();
+            foreach (var column in tableConfiguration.Columns)
+            {
+                if (!databaseColumnNames.Contains(column))
+                    throw new SqlGeneratorException($"Column not found in database! ({column})");
+            }
         }
     }
 }

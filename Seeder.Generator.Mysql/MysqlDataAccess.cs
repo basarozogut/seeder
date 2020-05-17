@@ -1,58 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Seeder.Configuration;
 using Seeder.Generator.DataObjects;
 using Seeder.Generator.Interfaces;
+using MySql.Data.MySqlClient;
 
-namespace Seeder.Generator.Mssql
+namespace Seeder.Generator.Mysql
 {
     sealed class MysqlDataAccess : IDataAccess
     {
-        private readonly SqlConnection _connection;
+        private readonly MySqlConnection _connection;
 
-        public MysqlDataAccess(string connectionString)
+        public MysqlDataAccess(MySqlConnection connection)
         {
-            _connection = new SqlConnection(connectionString);
+            _connection = connection;
         }
 
         public List<DatabaseColumn> GetColumnStructureFromDatabase(TableConfiguration tableConfiguration)
         {
-            const string sql =
-                     @"SELECT 
-                       SCHEMA_NAME(T.schema_id) AS SchemaName,
-	                   T.name AS TableName,
-                       C.name AS ColumnName,
-                       P.name AS DataType,
-                       P.max_length AS Size 
-		                FROM   sys.objects AS T
-			                   JOIN sys.columns AS C ON T.object_id = C.object_id
-			                   JOIN sys.types AS P ON C.system_type_id = P.system_type_id
-		                WHERE  T.type_desc = 'USER_TABLE' AND P.name <> 'sysname' AND T.name = @tableName AND SCHEMA_NAME(T.schema_id) = @schemaName";
-            var cmd = new SqlCommand(sql, _connection);
-            cmd.Parameters.AddWithValue("@schemaName", tableConfiguration.SchemaName);
-            cmd.Parameters.AddWithValue("@tableName", tableConfiguration.TableName);
-            var da = new SqlDataAdapter(cmd);
-            var dt = new DataTable();
-            da.Fill(dt);
+            CheckTableNameForSecurity(tableConfiguration);
 
-            return dt.Rows.Cast<DataRow>().Select(r => new DatabaseColumn()
+            var sql =
+                     $"SHOW COLUMNS FROM {tableConfiguration.TableName}";
+            using (var cmd = new MySqlCommand(sql, _connection))
             {
-                ColumnName = (string)r["ColumnName"],
-                DataType = (string)r["DataType"]
-            }).ToList();
+                cmd.Parameters.AddWithValue("@schemaName", tableConfiguration.SchemaName);
+                cmd.Parameters.AddWithValue("@tableName", tableConfiguration.TableName);
+                var da = new MySqlDataAdapter(cmd);
+                var dt = new DataTable();
+                da.Fill(dt);
+
+                return dt.Rows.Cast<DataRow>().Select(r => new DatabaseColumn()
+                {
+                    ColumnName = (string)r["Field"],
+                    DataType = (string)r["Type"]
+                }).ToList();
+            }
         }
 
         public List<DatabaseRow> GetDataForTable(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns)
         {
+            CheckTableNameForSecurity(tableConfiguration);
+            MakeSecurityCheckForTableColumns(tableConfiguration, databaseColumns);
+
             var sql =
                 $"SELECT {string.Join(",", tableConfiguration.Columns)} FROM {tableConfiguration.TableName}";
-            var cmd = new SqlCommand(sql, _connection);
-            var da = new SqlDataAdapter(cmd);
+            var cmd = new MySqlCommand(sql, _connection);
+            var da = new MySqlDataAdapter(cmd);
             var dt = new DataTable();
             da.Fill(dt);
 
@@ -85,9 +81,35 @@ namespace Seeder.Generator.Mssql
             return tempRows;
         }
 
-        public void Dispose()
+        private void CheckTableNameForSecurity(TableConfiguration tableConfiguration)
         {
-            _connection.Dispose();
+            const string sql = "SHOW TABLES";
+            using (var cmd = new MySqlCommand(sql, _connection))
+            {
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var tableName = (string)reader[0];
+                        if (tableName == tableConfiguration.TableName)
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+
+            throw new SqlGeneratorException($"Table name ({tableConfiguration.TableName}) is not present in database!");
+        }
+
+        private void MakeSecurityCheckForTableColumns(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns)
+        {
+            var databaseColumnNames = databaseColumns.Select(r => r.ColumnName).ToList();
+            foreach (var column in tableConfiguration.Columns)
+            {
+                if (!databaseColumnNames.Contains(column))
+                    throw new SqlGeneratorException($"Column not found in database! ({column})");
+            }
         }
     }
 }
