@@ -59,8 +59,6 @@ namespace Seeder.Generator.Mysql
                 WriteDelete(sql, rows);
             }
 
-            // TODO write statement generator.
-
             return sql.ToString();
         }
 
