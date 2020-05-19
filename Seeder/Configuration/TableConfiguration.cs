@@ -12,7 +12,7 @@ namespace Seeder.Configuration
 
         public string TableName { get; set; }
 
-        public string IdColumn { get; set; }
+        public List<string> IdColumns { get; set; }
 
         public List<string> Columns { get; set; }
 
@@ -30,7 +30,7 @@ namespace Seeder.Configuration
             {
                 SchemaName = "dbo",
                 TableName = tableName,
-                IdColumn = "Id",
+                IdColumns = new List<string> { "Id" },
                 AutoFindColumns = true,
                 EnableUpdate = true,
                 EnableInsert = true,

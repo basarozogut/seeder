@@ -34,7 +34,7 @@ namespace Seeder.Generator.Mysql
 
                 return dt.Rows.Cast<DataRow>().Select(r => new DatabaseColumn()
                 {
-                    IdColumn = tableConfiguration.IdColumn == (string)r["Field"],
+                    IdColumn = tableConfiguration.IdColumns.Contains((string)r["Field"]),
                     ColumnName = (string)r["Field"],
                     DataType = (string)r["Type"],
                 }).ToList();

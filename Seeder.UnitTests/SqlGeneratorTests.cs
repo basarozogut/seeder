@@ -135,7 +135,7 @@ namespace Seeder.UnitTests
             var generator = new MysqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object, new SqlCompactStringBuilderFactory());
             var generatedSql = generator.GenerateSql();
             const string expectedSql =
-                "DELETE FROM Users WHERE Id NOT IN (1,2);";
+                "DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 1);DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 2);";
             Assert.AreEqual(generatedSql, expectedSql);
         }
     }

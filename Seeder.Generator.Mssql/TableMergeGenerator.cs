@@ -55,7 +55,8 @@ namespace Seeder.Generator.Mssql
                 else
                     sql.Append("");
             }
-            sql.AppendLine($") AS s ({string.Join(", ", _tableConfiguration.Columns)}) ON (s.{_tableConfiguration.IdColumn} = t.{_tableConfiguration.IdColumn})");
+            var idQuery = _tableConfiguration.IdColumns.Select(r => $"(s.{r} = t.{r})");
+            sql.AppendLine($") AS s ({string.Join(", ", _tableConfiguration.Columns)}) ON {string.Join(" AND ", idQuery)}");
 
             if (_tableConfiguration.EnableUpdate)
             {
@@ -81,7 +82,7 @@ namespace Seeder.Generator.Mssql
         {
             sql.AppendLine("WHEN MATCHED");
             sql.AppendLine("THEN UPDATE SET");
-            foreach (var column in _tableConfiguration.Columns.Where(r => r != _tableConfiguration.IdColumn))
+            foreach (var column in _tableConfiguration.Columns.Where(r => !_tableConfiguration.IdColumns.Contains(r)))
             {
                 sql.Append($"t.{column} = s.{column}");
                 if (column != _tableConfiguration.Columns.Last())

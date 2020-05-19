@@ -40,7 +40,7 @@ namespace Seeder.Generator.Mssql
 
             return dt.Rows.Cast<DataRow>().Select(r => new DatabaseColumn()
             {
-                IdColumn = tableConfiguration.IdColumn == (string)r["ColumnName"],
+                IdColumn = tableConfiguration.IdColumns.Contains((string)r["ColumnName"]),
                 ColumnName = (string)r["ColumnName"],
                 DataType = (string)r["DataType"]
             }).ToList();
