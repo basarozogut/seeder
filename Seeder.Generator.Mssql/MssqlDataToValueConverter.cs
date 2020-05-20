@@ -1,4 +1,6 @@
-﻿using Seeder.Generator.DataObjects;
+﻿using System;
+using System.Globalization;
+using Seeder.Generator.DataObjects;
 using Seeder.Generator.Interfaces;
 
 namespace Seeder.Generator.Mssql
@@ -19,8 +21,8 @@ namespace Seeder.Generator.Mssql
             if (data.Column.DataType == "int")
                 return ((int)data.Value).ToString();
 
-            if (data.Column.DataType == "datetime") // conversion not supported for now
-                return "NULL"; // TODO make conversion
+            if (data.Column.DataType == "datetime")
+                return $"'{((DateTime)data.Value).ToString("yyyy-MM-dd'T'HH:mm:ss.fffK", CultureInfo.InvariantCulture)}'";
 
             throw new SqlGeneratorException($"Unsupported data type: {data.Column.DataType}");
         }
