@@ -9,7 +9,7 @@ using Seeder.Generator.Interfaces;
 
 namespace Seeder.Generator.Mssql
 {
-    sealed class MssqlDataAccess : IDataAccess
+    public sealed class MssqlDataAccess : IDataAccess
     {
         private readonly SqlConnection _connection;
 
