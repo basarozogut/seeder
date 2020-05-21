@@ -5,7 +5,6 @@ using Seeder.Configuration;
 using Seeder.Generator.Mssql;
 using Seeder.Generator.Interfaces;
 using Seeder.Generator.DataObjects;
-using Seeder.Generator.SqlStringBuilder;
 using Seeder.Generator.Mysql;
 
 namespace Seeder.UnitTests
@@ -102,10 +101,24 @@ THEN DELETE
             testObject.DatabaseConfiguration.Tables[0].EnableUpdate = true;
             testObject.DatabaseConfiguration.Tables[0].EnableDelete = false;
 
-            var generator = new MysqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object, new SqlCompactStringBuilderFactory());
+            var generator = new MysqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object);
             var generatedSql = generator.GenerateSql();
             const string expectedSql =
-                "INSERT INTO Users (Id, Username, Password) VALUES (1,'User 1','1234') ON DUPLICATE KEY UPDATE Username = 'User 1', Password = '1234';INSERT INTO Users (Id, Username, Password) VALUES (2,'User 2','5678') ON DUPLICATE KEY UPDATE Username = 'User 2', Password = '5678';";
+@"-- Seed for [Users]
+INSERT INTO Users
+(Id, Username, Password)
+VALUES
+(1,'User 1','1234')
+ON DUPLICATE KEY UPDATE
+Username = 'User 1',
+Password = '1234';
+INSERT INTO Users
+(Id, Username, Password)
+VALUES
+(2,'User 2','5678')
+ON DUPLICATE KEY UPDATE
+Username = 'User 2',
+Password = '5678';";
             Assert.AreEqual(generatedSql, expectedSql);
         }
 
@@ -117,10 +130,15 @@ THEN DELETE
             testObject.DatabaseConfiguration.Tables[0].EnableUpdate = false;
             testObject.DatabaseConfiguration.Tables[0].EnableDelete = false;
 
-            var generator = new MysqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object, new SqlCompactStringBuilderFactory());
+            var generator = new MysqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object);
             var generatedSql = generator.GenerateSql();
             const string expectedSql =
-                "INSERT INTO Users (Id, Username, Password) VALUES (1,'User 1','1234'), (2,'User 2','5678');";
+@"-- Seed for [Users]
+INSERT INTO Users
+(Id, Username, Password)
+VALUES
+(1,'User 1','1234'),
+(2,'User 2','5678');";
             Assert.AreEqual(generatedSql, expectedSql);
         }
 
@@ -132,10 +150,22 @@ THEN DELETE
             testObject.DatabaseConfiguration.Tables[0].EnableUpdate = true;
             testObject.DatabaseConfiguration.Tables[0].EnableDelete = false;
 
-            var generator = new MysqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object, new SqlCompactStringBuilderFactory());
+            var generator = new MysqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object);
             var generatedSql = generator.GenerateSql();
             const string expectedSql =
-                "UPDATE Users SET Username = 'User 1', Password = '1234' WHERE Id = 1;UPDATE Users SET Username = 'User 2', Password = '5678' WHERE Id = 2;";
+@"-- Seed for [Users]
+UPDATE Users
+SET
+Username = 'User 1',
+Password = '1234'
+WHERE
+Id = 1;
+UPDATE Users
+SET
+Username = 'User 2',
+Password = '5678'
+WHERE
+Id = 2;";
             Assert.AreEqual(generatedSql, expectedSql);
         }
 
@@ -147,10 +177,12 @@ THEN DELETE
             testObject.DatabaseConfiguration.Tables[0].EnableUpdate = false;
             testObject.DatabaseConfiguration.Tables[0].EnableDelete = true;
 
-            var generator = new MysqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object, new SqlCompactStringBuilderFactory());
+            var generator = new MysqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object);
             var generatedSql = generator.GenerateSql();
             const string expectedSql =
-                "DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 1);DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 2);";
+@"-- Seed for [Users]
+DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 1);
+DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 2);";
             Assert.AreEqual(generatedSql, expectedSql);
         }
     }

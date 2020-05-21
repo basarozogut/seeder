@@ -71,7 +71,7 @@ namespace Seeder.Generator.Mssql
                 GenerateDelete(sql);
             }
 
-            sql.Append(";");
+            sql.AppendLine(";");
 
             return sql.ToString();
         }

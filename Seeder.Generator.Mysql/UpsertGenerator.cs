@@ -4,6 +4,7 @@ using Seeder.Generator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Seeder.Generator.Mysql
 {
@@ -12,28 +13,25 @@ namespace Seeder.Generator.Mysql
         private readonly TableConfiguration _tableConfiguration;
         private readonly List<DatabaseColumn> _databaseColumns;
         private readonly IDataAccess _dataAccess;
-        private readonly ISqlStringBuilderFactory _sqlStringBuilderFactory;
         private readonly IDataToValueConverter _dataToValueConverter = new MysqlDataToValueConverter();
 
         public UpsertGenerator(
             TableConfiguration tableConfiguration,
             List<DatabaseColumn> databaseColumns,
-            IDataAccess dataAccess,
-            ISqlStringBuilderFactory sqlStringBuilderFactory)
+            IDataAccess dataAccess)
         {
             _tableConfiguration = tableConfiguration;
             _databaseColumns = databaseColumns;
             _dataAccess = dataAccess;
-            _sqlStringBuilderFactory = sqlStringBuilderFactory;
         }
 
         public string Generate()
         {
             var rows = _dataAccess.GetDataForTable(_tableConfiguration, _databaseColumns);
 
-            var sql = _sqlStringBuilderFactory.CreateSqlStringBuilder();
+            var sql = new StringBuilder();
 
-            sql.AppendCommentLine($"-- Seed for [{_tableConfiguration.TableName}]");
+            sql.AppendLine($"-- Seed for [{_tableConfiguration.TableName}]");
 
             if (_tableConfiguration.EnableInsert && _tableConfiguration.EnableUpdate)
             {
@@ -65,7 +63,7 @@ namespace Seeder.Generator.Mysql
             return sql.ToString();
         }
 
-        private void WriteInsert(ISqlStringBuilder sql, List<DatabaseRow> rows)
+        private void WriteInsert(StringBuilder sql, List<DatabaseRow> rows)
         {
             /**
              * INSERT INTO tablename
@@ -87,10 +85,10 @@ namespace Seeder.Generator.Mysql
                 else
                     sql.Append("");
             }
-            sql.EndStatement();
+            sql.AppendLine(";");
         }
 
-        private void WriteInsertOrUpdate(ISqlStringBuilder sql, DatabaseRow row)
+        private void WriteInsertOrUpdate(StringBuilder sql, DatabaseRow row)
         {
             /**
             * INSERT INTO tablename
@@ -116,10 +114,10 @@ namespace Seeder.Generator.Mysql
                 else
                     sql.Append("");
             }
-            sql.EndStatement();
+            sql.AppendLine(";");
         }
 
-        private void WriteUpdate(ISqlStringBuilder sql, DatabaseRow row)
+        private void WriteUpdate(StringBuilder sql, DatabaseRow row)
         {
             /**
             UPDATE tablename
@@ -144,10 +142,10 @@ namespace Seeder.Generator.Mysql
             sql.AppendLine("WHERE");
             var idQuery = row.Data.Where(r => r.Column.IdColumn).Select(r => $"{r.Column.ColumnName} = {r.Value}");
             sql.Append(string.Join(" AND ", idQuery));
-            sql.EndStatement();
+            sql.AppendLine(";");
         }
 
-        private void WriteDelete(ISqlStringBuilder sql, DatabaseRow row)
+        private void WriteDelete(StringBuilder sql, DatabaseRow row)
         {
             /**
             DELETE FROM tablename WHERE Id NOT IN (id1, id2)
@@ -156,7 +154,7 @@ namespace Seeder.Generator.Mysql
             var idColumns = row.Data.Where(r => r.Column.IdColumn).ToList();
             var idQuery = string.Join("AND", idColumns.Select(r => $"t.{r.Column.ColumnName} = {_dataToValueConverter.Convert(r)}"));
             sql.Append($"DELETE FROM {_tableConfiguration.TableName} WHERE NOT EXISTS (SELECT 1 FROM {_tableConfiguration.TableName} AS t WHERE {idQuery})");
-            sql.EndStatement();
+            sql.AppendLine(";");
         }
 
         private string GenerateValuesForRow(DatabaseRow row)

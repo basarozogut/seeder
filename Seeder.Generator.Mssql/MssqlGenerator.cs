@@ -37,7 +37,7 @@ namespace Seeder.Generator.Mssql
                 sb.Append(generatedSql);
             }
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
     }
 }
