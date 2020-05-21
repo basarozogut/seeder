@@ -9,7 +9,7 @@ using MySql.Data.MySqlClient;
 
 namespace Seeder.Generator.Mysql
 {
-    sealed class MysqlDataAccess : IDataAccess
+    public sealed class MysqlDataAccess : IDataAccess
     {
         private readonly MySqlConnection _connection;
 
