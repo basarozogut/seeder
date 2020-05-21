@@ -10,19 +10,16 @@ namespace Seeder.Generator.Mssql
     {
         private readonly DatabaseConfiguration _configuration;
         private readonly IDataAccess _dataAccess;
-        private readonly ISqlStringBuilderFactory _sqlStringBuilderFactory;
 
         /// <summary>
         /// Create a seed script generator for a MSSQL database.
         /// </summary>
         /// <param name="configuration">The database configuration</param>
         /// <param name="dataAccess">The data access layer for MSSQL database</param>
-        /// <param name="sqlStringBuilderFactory">The string builder factory, which will ultimately generate the sql string</param>
-        public MssqlGenerator(DatabaseConfiguration configuration, IDataAccess dataAccess, ISqlStringBuilderFactory sqlStringBuilderFactory)
+        public MssqlGenerator(DatabaseConfiguration configuration, IDataAccess dataAccess)
         {
             _configuration = configuration;
             _dataAccess = dataAccess;
-            _sqlStringBuilderFactory = sqlStringBuilderFactory;
         }
 
         public string GenerateSql()
@@ -36,7 +33,7 @@ namespace Seeder.Generator.Mssql
                 {
                     tableConfiguration.Columns = databaseColumns.Select(r => r.ColumnName).ToList();
                 }
-                var generatedSql = new TableMergeGenerator(tableConfiguration, databaseColumns, _dataAccess, _sqlStringBuilderFactory).Generate();
+                var generatedSql = new TableMergeGenerator(tableConfiguration, databaseColumns, _dataAccess).Generate();
                 sb.Append(generatedSql);
             }
 

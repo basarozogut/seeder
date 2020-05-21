@@ -13,7 +13,8 @@ namespace Seeder.UnitTests
     [TestClass]
     public class SqlGeneratorTests
     {
-        class TestObject {
+        class TestObject
+        {
             public DatabaseConfiguration DatabaseConfiguration;
             public Mock<IDataAccess> MockDataAccess;
         }
@@ -72,10 +73,24 @@ namespace Seeder.UnitTests
         {
             var testObject = CreateTestObject();
 
-            var generator = new MssqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object, new SqlCompactStringBuilderFactory());
+            var generator = new MssqlGenerator(testObject.DatabaseConfiguration, testObject.MockDataAccess.Object);
             var generatedSql = generator.GenerateSql();
             const string expectedSql =
-                "MERGE Users AS t USING (VALUES (1,'User 1','1234'), (2,'User 2','5678')) AS s (Id, Username, Password) ON (s.Id = t.Id) WHEN MATCHED THEN UPDATE SET t.Username = s.Username, t.Password = s.Password WHEN NOT MATCHED BY TARGET THEN INSERT(Id, Username, Password) VALUES(s.Id, s.Username, s.Password) WHEN NOT MATCHED BY SOURCE THEN DELETE;";
+@"-- Seed for [Users]
+MERGE Users AS t USING (VALUES
+(1,'User 1','1234'),
+(2,'User 2','5678')
+) AS s (Id, Username, Password) ON (s.Id = t.Id)
+WHEN MATCHED
+THEN UPDATE SET
+t.Username = s.Username,
+t.Password = s.Password
+WHEN NOT MATCHED BY TARGET
+THEN INSERT (Id, Username, Password)
+VALUES (s.Id, s.Username, s.Password)
+WHEN NOT MATCHED BY SOURCE
+THEN DELETE
+;";
             Assert.AreEqual(generatedSql, expectedSql);
         }
 
@@ -91,7 +106,7 @@ namespace Seeder.UnitTests
             var generatedSql = generator.GenerateSql();
             const string expectedSql =
                 "INSERT INTO Users (Id, Username, Password) VALUES (1,'User 1','1234') ON DUPLICATE KEY UPDATE Username = 'User 1', Password = '1234';INSERT INTO Users (Id, Username, Password) VALUES (2,'User 2','5678') ON DUPLICATE KEY UPDATE Username = 'User 2', Password = '5678';";
-            Assert.AreEqual(generatedSql, expectedSql);            
+            Assert.AreEqual(generatedSql, expectedSql);
         }
 
         [TestMethod]

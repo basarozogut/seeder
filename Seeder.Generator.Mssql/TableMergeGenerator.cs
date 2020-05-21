@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using Seeder.Configuration;
 using Seeder.Generator.DataObjects;
 using Seeder.Generator.Interfaces;
@@ -15,28 +16,25 @@ namespace Seeder.Generator.Mssql
         private readonly TableConfiguration _tableConfiguration;
         private readonly List<DatabaseColumn> _databaseColumns;
         private readonly IDataAccess _dataAccess;
-        private readonly ISqlStringBuilderFactory _sqlStringBuilderFactory;
         private readonly IDataToValueConverter dataToValueConverter = new MssqlDataToValueConverter();
 
         public TableMergeGenerator(
             TableConfiguration tableConfiguration,
             List<DatabaseColumn> databaseColumns,
-            IDataAccess dataAccess,
-            ISqlStringBuilderFactory sqlStringBuilderFactory)
+            IDataAccess dataAccess)
         {
             _tableConfiguration = tableConfiguration;
             _databaseColumns = databaseColumns;
             _dataAccess = dataAccess;
-            _sqlStringBuilderFactory = sqlStringBuilderFactory;
         }
 
         public string Generate()
         {
             var rows = _dataAccess.GetDataForTable(_tableConfiguration, _databaseColumns);
 
-            var sql = _sqlStringBuilderFactory.CreateSqlStringBuilder();
+            var sql = new StringBuilder();
 
-            sql.AppendCommentLine($"-- Seed for [{_tableConfiguration.TableName}]");
+            sql.AppendLine($"-- Seed for [{_tableConfiguration.TableName}]");
 
             sql.AppendLine($"MERGE {_tableConfiguration.TableName} AS t USING (VALUES");
             foreach (var row in rows)
@@ -53,7 +51,7 @@ namespace Seeder.Generator.Mssql
                 if (row != rows.Last())
                     sql.AppendLine(",");
                 else
-                    sql.Append("");
+                    sql.AppendLine("");
             }
             var idQuery = _tableConfiguration.IdColumns.Select(r => $"(s.{r} = t.{r})");
             sql.AppendLine($") AS s ({string.Join(", ", _tableConfiguration.Columns)}) ON {string.Join(" AND ", idQuery)}");
@@ -73,12 +71,12 @@ namespace Seeder.Generator.Mssql
                 GenerateDelete(sql);
             }
 
-            sql.EndStatement();
+            sql.Append(";");
 
             return sql.ToString();
         }
 
-        private void GenerateUpdate(ISqlStringBuilder sql)
+        private void GenerateUpdate(StringBuilder sql)
         {
             sql.AppendLine("WHEN MATCHED");
             sql.AppendLine("THEN UPDATE SET");
@@ -92,17 +90,17 @@ namespace Seeder.Generator.Mssql
             }
         }
 
-        private void GenerateInsert(ISqlStringBuilder sql)
+        private void GenerateInsert(StringBuilder sql)
         {
             sql.AppendLine("WHEN NOT MATCHED BY TARGET");
-            sql.AppendLine($"THEN INSERT({string.Join(", ", _tableConfiguration.Columns)})");
-            sql.AppendLine($"VALUES({string.Join(", ", _tableConfiguration.Columns.Select(r => $"s.{r}"))})");
+            sql.AppendLine($"THEN INSERT ({string.Join(", ", _tableConfiguration.Columns)})");
+            sql.AppendLine($"VALUES ({string.Join(", ", _tableConfiguration.Columns.Select(r => $"s.{r}"))})");
         }
 
-        private void GenerateDelete(ISqlStringBuilder sql)
+        private void GenerateDelete(StringBuilder sql)
         {
             sql.AppendLine("WHEN NOT MATCHED BY SOURCE");
-            sql.Append("THEN DELETE");
+            sql.AppendLine("THEN DELETE");
         }
     }
 }
