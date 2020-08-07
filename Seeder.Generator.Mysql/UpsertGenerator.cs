@@ -152,7 +152,7 @@ namespace Seeder.Generator.Mysql
              */
 
             var idColumns = row.Data.Where(r => r.Column.IdColumn).ToList();
-            var idQuery = string.Join("AND", idColumns.Select(r => $"t.{r.Column.ColumnName} = {_dataToValueConverter.Convert(r)}"));
+            var idQuery = string.Join(" AND ", idColumns.Select(r => $"t.{r.Column.ColumnName} = {_dataToValueConverter.Convert(r)}"));
             sql.Append($"DELETE FROM {_tableConfiguration.TableName} WHERE NOT EXISTS (SELECT 1 FROM {_tableConfiguration.TableName} AS t WHERE {idQuery})");
             sql.AppendLine(";");
         }
