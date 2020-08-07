@@ -80,7 +80,7 @@ namespace Seeder.Generator.Mssql
         {
             sql.AppendLine("WHEN MATCHED");
             sql.AppendLine("THEN UPDATE SET");
-            foreach (var column in _tableConfiguration.Columns.Where(r => !_tableConfiguration.IdColumns.Contains(r)))
+            foreach (var column in GetAllColumnsExceptIdColumns())
             {
                 sql.Append($"t.{column} = s.{column}");
                 if (column != _tableConfiguration.Columns.Last())
@@ -88,6 +88,11 @@ namespace Seeder.Generator.Mssql
                 else
                     sql.AppendLine("");
             }
+        }
+
+        private IEnumerable<string> GetAllColumnsExceptIdColumns()
+        {
+            return _tableConfiguration.Columns.Where(r => !_tableConfiguration.IdColumns.Contains(r));
         }
 
         private void GenerateInsert(StringBuilder sql)
