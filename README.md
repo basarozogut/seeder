@@ -22,7 +22,7 @@ var dbConfig = new DatabaseConfiguration()
     }
 };
 
- // Convenient method. Usually enough for most cases.
+// Convenient method. Usually enough for most cases.
 using (var connection = new MySqlConnection("your_connection_string_here"))
 {
     connection.Open();
