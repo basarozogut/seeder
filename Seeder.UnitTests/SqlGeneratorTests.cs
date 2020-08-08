@@ -303,8 +303,7 @@ Id = 2 AND OtherId = 45;";
             var generatedSql = generator.GenerateSql();
             const string expectedSql =
 @"-- Seed for [Users]
-DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 1);
-DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 2);";
+DELETE FROM Users WHERE ((Id <> 1) AND (Id <> 2));";
             Assert.AreEqual(generatedSql, expectedSql);
         }
 
@@ -320,8 +319,7 @@ DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 2);";
             var generatedSql = generator.GenerateSql();
             const string expectedSql =
 @"-- Seed for [Users]
-DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 1 AND t.OtherId = 44);
-DELETE FROM Users WHERE NOT EXISTS (SELECT 1 FROM Users AS t WHERE t.Id = 2 AND t.OtherId = 45);";
+DELETE FROM Users WHERE ((Id <> 1 OR OtherId <> 44) AND (Id <> 2 OR OtherId <> 45));";
             Assert.AreEqual(generatedSql, expectedSql);
         }
     }

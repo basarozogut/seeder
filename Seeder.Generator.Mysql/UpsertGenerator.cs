@@ -54,10 +54,7 @@ namespace Seeder.Generator.Mysql
 
             if (_tableConfiguration.EnableDelete)
             {
-                foreach (var row in rows)
-                {
-                    WriteDelete(sql, row);
-                }
+                WriteDelete(sql, rows);
             }
 
             return sql.ToString();
@@ -145,15 +142,25 @@ namespace Seeder.Generator.Mysql
             sql.AppendLine(";");
         }
 
-        private void WriteDelete(StringBuilder sql, DatabaseRow row)
+        private void WriteDelete(StringBuilder sql, List<DatabaseRow> rows)
         {
             /**
-            DELETE FROM tablename WHERE Id NOT IN (id1, id2)
-             */
+            * Deletes all not-matching rows.
+            * 
+            * e.g.
+            * DELETE FROM tablename WHERE ((Id <> id_value_1 AND OtherId <> other_id_value_1) AND (Id <> id_value_2 AND OtherId <> other_id_value_2))
+            */
 
-            var idColumns = row.Data.Where(r => r.Column.IdColumn).ToList();
-            var idQuery = string.Join(" AND ", idColumns.Select(r => $"t.{r.Column.ColumnName} = {_dataToValueConverter.Convert(r)}"));
-            sql.Append($"DELETE FROM {_tableConfiguration.TableName} WHERE NOT EXISTS (SELECT 1 FROM {_tableConfiguration.TableName} AS t WHERE {idQuery})");
+            var idSubqueries = new List<string>();
+            foreach (var row in rows)
+            {
+                var idColumns = row.Data.Where(r => r.Column.IdColumn).ToList();
+                var idSubquery = string.Join(" OR ", idColumns.Select(r => $"{r.Column.ColumnName} <> {_dataToValueConverter.Convert(r)}"));
+                idSubqueries.Add(idSubquery);
+            }
+
+            var idQuery = string.Join(" AND ", idSubqueries.Select(r => $"({r})"));
+            sql.Append($"DELETE FROM {_tableConfiguration.TableName} WHERE ({idQuery})");
             sql.AppendLine(";");
         }
 
