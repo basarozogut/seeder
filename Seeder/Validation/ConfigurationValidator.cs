@@ -52,7 +52,7 @@ namespace Seeder.Validation
 
                 if (table.EnableUpdate == false && table.EnableDelete == false && table.EnableInsert == false)
                 {
-                    ErrorProvider.AddError($"Table must have at least one enable DDL command!");
+                    ErrorProvider.AddError($"Table must have at least one enable DML command!");
                     return false;
                 }
             }
