@@ -44,12 +44,6 @@ namespace Seeder.Validation
                     return false;
                 }
 
-                if (table.IdColumns == null || table.IdColumns.Count <= 0)
-                {
-                    ErrorProvider.AddError($"{nameof(table.IdColumns)} can't be null or empty!");
-                    return false;
-                }
-
                 if (table.AutoFindColumns == false && (table.Columns == null || table.Columns.Count <= 0))
                 {
                     ErrorProvider.AddError($"{nameof(table.Columns)} can't be null or empty!");

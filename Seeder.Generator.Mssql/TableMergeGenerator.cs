@@ -53,7 +53,7 @@ namespace Seeder.Generator.Mssql
                 else
                     sql.AppendLine("");
             }
-            var idQuery = _tableConfiguration.IdColumns.Select(r => $"(s.{r} = t.{r})");
+            var idQuery = _databaseColumns.Where(r => r.IdColumn).Select(r => $"(s.{r.ColumnName} = t.{r.ColumnName})");
             sql.AppendLine($") AS s ({string.Join(", ", _tableConfiguration.Columns)}) ON {string.Join(" AND ", idQuery)}");
 
             if (_tableConfiguration.EnableUpdate)
@@ -92,7 +92,7 @@ namespace Seeder.Generator.Mssql
 
         private IEnumerable<string> GetAllColumnsExceptIdColumns()
         {
-            return _tableConfiguration.Columns.Where(r => !_tableConfiguration.IdColumns.Contains(r));
+            return _tableConfiguration.Columns.Where(r => !_databaseColumns.Where(m => m.IdColumn).Select(m => m.ColumnName).Contains(r));
         }
 
         private void GenerateInsert(StringBuilder sql)

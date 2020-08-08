@@ -26,19 +26,37 @@ namespace Seeder.Generator.Mysql
                      $"SHOW COLUMNS FROM {tableConfiguration.TableName}";
             using (var cmd = new MySqlCommand(sql, _connection))
             {
-                cmd.Parameters.AddWithValue("@schemaName", tableConfiguration.SchemaName);
-                cmd.Parameters.AddWithValue("@tableName", tableConfiguration.TableName);
                 var da = new MySqlDataAdapter(cmd);
                 var dt = new DataTable();
                 da.Fill(dt);
 
                 return dt.Rows.Cast<DataRow>().Select(r => new DatabaseColumn()
                 {
-                    IdColumn = tableConfiguration.IdColumns.Contains((string)r["Field"]),
+                    IdColumn = IsPrimaryKey((string)r["Key"]),
                     ColumnName = (string)r["Field"],
-                    DataType = (string)r["Type"],
+                    DataType = ExtractType((string)r["Type"])
                 }).ToList();
             }
+        }
+
+        /// <summary>
+        /// Extracts type name from detailed type. Eg. converts nvarchar(50) to nvarchar
+        /// </summary>
+        /// <param name="fullType"></param>
+        /// <returns></returns>
+        private string ExtractType(string fullType)
+        {
+            if (!fullType.Contains('('))
+            {
+                return fullType;
+            }
+
+            return fullType.Substring(0, fullType.IndexOf('('));
+        }
+
+        private bool IsPrimaryKey(string key)
+        {
+            return key == "PRI";
         }
 
         public List<DatabaseRow> GetDataForTable(TableConfiguration tableConfiguration, List<DatabaseColumn> databaseColumns)

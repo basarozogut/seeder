@@ -46,7 +46,6 @@ namespace Seeder.UnitTests
             else
             {
                 columnStructure = new List<DatabaseColumn>() { idColumn, otherIdColumn, usernameColumn, passwordColumn };
-                databaseConfiguration.Tables[0].IdColumns.Add("OtherId");
             }
 
             var rows = new List<DatabaseRow>()

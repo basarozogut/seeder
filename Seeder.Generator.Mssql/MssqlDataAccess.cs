@@ -26,7 +26,8 @@ namespace Seeder.Generator.Mssql
 	                   T.name AS TableName,
                        C.name AS ColumnName,
                        P.name AS DataType,
-                       P.max_length AS Size 
+                       P.max_length AS Size,
+                       C.is_identity AS IsIdentity
 		                FROM   sys.objects AS T
 			                   JOIN sys.columns AS C ON T.object_id = C.object_id
 			                   JOIN sys.types AS P ON C.system_type_id = P.system_type_id
@@ -40,7 +41,7 @@ namespace Seeder.Generator.Mssql
 
             return dt.Rows.Cast<DataRow>().Select(r => new DatabaseColumn()
             {
-                IdColumn = tableConfiguration.IdColumns.Contains((string)r["ColumnName"]),
+                IdColumn = (bool)r["IsIdentity"],
                 ColumnName = (string)r["ColumnName"],
                 DataType = (string)r["DataType"]
             }).ToList();
