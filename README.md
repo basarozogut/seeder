@@ -20,6 +20,14 @@ var dbConfig = new DatabaseConfiguration()
     }
 };
 
+ // Convenient method. Usually enough for most cases.
+using (var connection = new MySqlConnection(@"Server=localhost;Database=seederexample;Uid=user;Pwd=pass;"))
+{
+    connection.Open();
+    var sql = MysqlGenerator.GenerateSql(dbConfig, connection);
+}
+
+// Detailed method. When you want to use custom data access layers, create the generator with a factory or use dependency injection for creating the generator etc.
 using (var connection = new MySqlConnection(@"Server=localhost;Database=seederexample;Uid=user;Pwd=pass;"))
 {
     connection.Open();
