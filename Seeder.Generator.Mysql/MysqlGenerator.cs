@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using System.Text;
+using MySql.Data.MySqlClient;
 using Seeder.Configuration;
 using Seeder.Generator.Interfaces;
 
@@ -38,6 +39,11 @@ namespace Seeder.Generator.Mysql
             }
 
             return sb.ToString().Trim();
+        }
+
+        public static string GenerateSql(DatabaseConfiguration databaseConfiguration, MySqlConnection mysqlConnection)
+        {
+            return new MysqlGenerator(databaseConfiguration, new MysqlDataAccess(mysqlConnection)).GenerateSql();
         }
     }
 }
