@@ -9,7 +9,9 @@ seeder currently supports code generation for MSSQL and MySQL databases.
 
 ## Sample Usage
 
-The following code will generate seed code for *single_key_example* and *composite_key_example*. You can then save the generated sql string to a file and run it directly on a CLI, in a sql management environment or add it to your deployment script etc.
+The following code will generate seed code for *single_key_example* and *composite_key_example*. *TableConfiguration.CreateDefault* method will generate a configuration for given table with reasonable defaults. Feel free to manually create the configuration if you want more control over the details.
+
+You can then save the generated sql string to a file and run it directly on a CLI, in a sql management environment or add it to your deployment script etc.
 
 ```c#
 var dbConfig = new DatabaseConfiguration()
