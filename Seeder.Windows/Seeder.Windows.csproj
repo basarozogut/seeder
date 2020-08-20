@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0082776C-02AF-469C-9AE4-C118D7D55566}</ProjectGuid>
+    <ProjectGuid>{CAE68A3D-A499-4066-953A-4BA904EDBF3A}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Seeder.Examples.Mysql</RootNamespace>
-    <AssemblyName>Seeder.Examples.Mysql</AssemblyName>
+    <RootNamespace>Seeder.Windows</RootNamespace>
+    <AssemblyName>Seeder.Windows</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -51,6 +51,9 @@
     <Reference Include="MySql.Data, Version=8.0.20.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.8.0.20\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
@@ -87,14 +90,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ISqlGeneratorFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SeederException.cs" />
+    <Compile Include="SqlGeneratorFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Seeder.Generator.Mssql\Seeder.Generator.Mssql.csproj">
+      <Project>{381f90ef-50fa-4b01-ac46-cc430e7a7c3d}</Project>
+      <Name>Seeder.Generator.Mssql</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Seeder.Generator.Mysql\Seeder.Generator.Mysql.csproj">
       <Project>{8dbeaed6-d070-429a-8cf6-ec4fdec01063}</Project>
       <Name>Seeder.Generator.Mysql</Name>
