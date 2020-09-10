@@ -44,6 +44,6 @@ The code generators are split into different assemblies for dependency managemen
 * *Seeder.Mysql* projects contains the Mysql spesific implementation.
 * *Seeder.Mssql* project contains the Mssql spesific implementation.
 * *Seeder.UnitTests* projects contains the unit tests for all of the above.
-* *Seeder.Windows* contains the windows command line interface for seeeder.
+* *Seeder.Windows* contains the Windows command line interface for seeeder.
 
 The pluggable architecture means you can use your favorite depedency injection library with the interfaces (e.g. ISqlGenerator, IDataAccess).
